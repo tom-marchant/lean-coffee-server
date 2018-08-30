@@ -1,0 +1,14 @@
+# Run Docker image
+docker run -d --rm -p 3001:27017 --name mongo-lcm mongo --bind_ip_all
+
+# View logs
+docker logs mongo-lcm
+
+# Obtain IP address of container (not much use in Windows)
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mongo-lcm
+
+# Obtain IP of Docker machine (this is where you can connect to any mapped/exposed container ports)
+docker-machine ip default
+
+# Open terminal to container
+docker exec -it mongo-lcm bash
