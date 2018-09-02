@@ -42,31 +42,72 @@ export default class MongoBoardRepository {
 	}
 	
 	get(id) {
-		Kitten.find({ id: id }, callback);
-		return boards[id]
+		return Board.findOne({ id: id }).exec()
 	}
 	
 	addCard(id, content) {
-		const board = get(id)
-		const cardId = board.cardSequence++
-		const card = {
-			"id": cardId,
-			"content": content
-		}
-		
-		board.cards.push(card)
-		return card
+		return new Promise((resolve, reject) => {
+			this.get(id).then((board) => {
+				const cardId = board.cardSequence++
+				
+				const card = {
+					"id": cardId,
+					"content": content
+				}
+				
+				board.cards.push(card)
+				
+				board.save().then((updatedBoard, err) => {
+					if (err) 
+						reject (err)
+					else
+						resolve(card)
+				})
+			})
+		})
 	}
 	
 	updateCard(boardId, cardId, content) {
-
+		return new Promise((resolve, reject) => {
+			this.get(boardId).then((board) => {
+				let card = getCardWithId(board.cards, cardId)
+				card.content = content
+				
+				return board.save()
+				
+			}).then((updatedBoard, err) => {
+				if (err) 
+					reject(err)
+				else
+					resolve()
+			})
+		})
 	}
 	
 	deleteCard(boardId, cardId) {
-
+		return new Promise((resolve, reject) => {
+			this.get(boardId).then((board) => {
+				const cardIndex = board.cards.findIndex(card => { return card.id == cardId})
+		
+				if (cardIndex >= 0) {
+					board.cards.splice(cardIndex, 1)
+					board.save().then(() => resolve())
+					
+				} else {
+					resolve()
+				}
+			})
+		})
 	}
 }
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
+}
+
+function getCardWithId(cards, cardId) {
+	cards.forEach((card) => {
+		if (card.id == cardId)
+			return card
+	})
 }
