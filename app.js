@@ -54,7 +54,9 @@ router.use(function(req, res, next) {
 
 router.route('/')
 	.post(function (req, res) {
-		repository.create().then((newBoard) => {
+		const id = req.body.id
+		
+		repository.create(id).then((newBoard) => {
 			res.status(201).json(newBoard)
 		})
 	})

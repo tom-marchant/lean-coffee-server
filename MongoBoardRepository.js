@@ -34,7 +34,12 @@ export default class MongoBoardRepository {
 			cards: []
 		});
 		
-		board.save().then(() => console.log(`Created board with ID ${id}`));
+		return new Promise((resolve, reject) => {
+			board.save().then(() => {
+				console.log(`Created board with ID ${id}`)
+				resolve(board)
+			});
+		})
 	}
 	
 	getAll() {
@@ -106,8 +111,5 @@ function getRandomInt(max) {
 }
 
 function getCardWithId(cards, cardId) {
-	cards.forEach((card) => {
-		if (card.id == cardId)
-			return card
-	})
+	return cards.find(card => card.id == cardId)
 }
