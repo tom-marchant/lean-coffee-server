@@ -13,12 +13,14 @@
   "license": "ISC",
   "jest": {
     "verbose": true,
-	"modulePathIgnorePatterns": ["<rootDir>/build/"]
+    "modulePathIgnorePatterns": [
+      "<rootDir>/build/"
+    ]
   },
   "dependencies": {
     "express": "^4.16.3",
     "morgan": "^1.9.0",
-	"mongoose": "^5.2.10"
+    "mongoose": "^5.2.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
@@ -26,6 +28,7 @@
     "@babel/preset-env": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.4.2",
+    "express-swagger-generator": "^1.1.9",
     "jest": "^23.5.0",
     "regenerator-runtime": "^0.12.1",
     "rimraf": "^2.6.1"

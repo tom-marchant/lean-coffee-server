@@ -76,9 +76,13 @@ export default class MongoBoardRepository {
 		return new Promise((resolve, reject) => {
 			this.get(boardId).then((board) => {
 				let card = getCardWithId(board.cards, cardId)
-				card.content = content
 				
-				return board.save()
+				if (card) {
+					card.content = content
+					return board.save()
+				} else {
+					// what?
+				}
 				
 			}).then((updatedBoard, err) => {
 				if (err) 
@@ -99,6 +103,7 @@ export default class MongoBoardRepository {
 					board.save().then(() => resolve())
 					
 				} else {
+					// error, no such card to delete
 					resolve()
 				}
 			})
