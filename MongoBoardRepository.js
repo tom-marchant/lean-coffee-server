@@ -1,10 +1,17 @@
 import mongoose from 'mongoose'
 
 const DATABASE_URL = 'mongodb://192.168.99.100:3001/lean-coffee-machine'
-		
+
+const connectionOptions = {
+	useNewUrlParser: true, 
+	useCreateIndexes: true,
+	connectTimeoutMS: 10000
+}
+
+// Schemas		
 const Board = mongoose.model('Board', { 
 	id: {
-		type: Number,
+		type: String,
 		unique: true
 	},
 	cardSequence: Number,
@@ -19,7 +26,7 @@ const Board = mongoose.model('Board', {
 export default class MongoBoardRepository {
 	constructor() {
 		mongoose.set('useCreateIndex', true)
-		mongoose.connect(DATABASE_URL, { useNewUrlParser: true }).then(
+		mongoose.connect(DATABASE_URL, connectionOptions).then(
 			() => { console.log(`Connected successfully to ${DATABASE_URL}`) },
 			err => { console.log("Failed to connect", err) }
 		)
@@ -38,7 +45,7 @@ export default class MongoBoardRepository {
 			board.save().then(() => {
 				console.log(`Created board with ID ${id}`)
 				resolve(board)
-			});
+			}, (err) => reject(err));
 		})
 	}
 	

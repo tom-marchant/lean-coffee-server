@@ -2,13 +2,20 @@ import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import expressSwaggerGenerator from 'express-swagger-generator'
-import routes from './Routes'
+import BoardRouter from './Routes'
+import MongoBoardRepository from './MongoBoardRepository'
+import timeout from 'connect-timeout'
 
 const app = express()
 
 app.use(morgan('dev')) // Logging
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(timeout('10s'))
+
+function haltOnTimedout (req, res, next) {
+  if (!req.timedout) next()
+}
 
 let swaggerOptions = {
     swaggerDefinition: {
@@ -35,7 +42,11 @@ app.get('/', function (req, res) {
 	res.redirect('/api-docs')
 });
 
-app.use('/v1/boards/', routes);
+const repository = new MongoBoardRepository()
+const router = new BoardRouter(repository).createRouter()
+
+app.use('/v1/boards/', router);
+app.use(haltOnTimedout)
 
 app.listen(3000, () => console.log('App listening on port 3000'))
 
